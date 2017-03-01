@@ -1,4 +1,5 @@
 #pragma config(I2C_Usage, I2C1, i2cSensors)
+#pragma config(Sensor, in1,    angle,          sensorAnalog)
 #pragma config(Sensor, dgtl1,  limitRight,     sensorTouch)
 #pragma config(Sensor, dgtl2,  limitLeft,      sensorTouch)
 #pragma config(Sensor, dgtl3,  right_sweeper_encoder, sensorQuadEncoder)
@@ -10,6 +11,7 @@
 #pragma config(Sensor, I2C_3,  left_drive_encoder, sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Sensor, I2C_4,  left_lift_encoder, sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Sensor, I2C_5,  right_lift_encoder, sensorQuadEncoderOnI2CPort,    , AutoAssign )
+#pragma config(Sensor, I2C_6,  compass,        sensorSpare2OnI2CPort,         , 0 )
 #pragma config(Motor,  port1,           right_sweeper, tmotorVex393_HBridge, PIDControl, reversed, encoderPort, dgtl3)
 #pragma config(Motor,  port2,           latch2,        tmotorVex393_MC29, PIDControl, reversed, encoderPort, I2C_1)
 #pragma config(Motor,  port3,           left_sweeper,  tmotorVex393_MC29, PIDControl, encoderPort, dgtl6)
@@ -40,6 +42,7 @@
 int p,i,d;
 bool finishedHoming = true, sweeping = false;
 const int SWEEPER_POWER = 25;
+int angle_reading;
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -283,7 +286,7 @@ task usercontrol()
   		motor[right_sweeper] = 0;
   	}
 
-
+  	angle_reading = SensorValue(angle);
 
   }
 }
