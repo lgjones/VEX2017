@@ -42,7 +42,12 @@
 int p,i,d;
 bool finishedHoming = true, sweeping = false;
 const int SWEEPER_POWER = 25;
-float angle_measurement;
+
+void moveShooter(int encodons);
+void turnToAngle(float angle);
+void driveDist(int encodons);
+void latch();
+void unlatch();
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -100,10 +105,6 @@ void pre_auton()
 	resetMotorEncoder(latch2);
 	wait1Msec(2000);
 
-	/*char msg[]={0x01,0x1E,0x02};
-	sendI2CMsg(msg,0);
-	msg[2]=0x00;
-	sendI2CMsg(msg,0);*/
 }
 
 /*---------------------------------------------------------------------------*/
@@ -123,7 +124,9 @@ task autonomous()
   // ..........................................................................
 
   // Remove this function call once you have "real" code.
-  AutonomousCodePlaceholderForTesting();
+  //AutonomousCodePlaceholderForTesting();
+
+
 }
 
 /*---------------------------------------------------------------------------*/
@@ -212,17 +215,11 @@ task usercontrol()
 
     // Remove this function call once you have "real" code.
     if(vexRT[Btn8DXmtr2]) {
-    	int power = 115;
-			int dist = 4400;
-    	setMotorTarget(right_launch, -dist, power, true);
-			//setMotorTarget(L1, dist, power, true);
+    	moveShooter(4400);
     }
 
     if(vexRT[Btn8UXmtr2]) {
-    	int power = 115;
-			int dist = 200;
-    	setMotorTarget(right_launch, -dist, power, true);
-			//setMotorTarget(L1, dist, power, true);
+    	moveShooter(200);
     }
 
     if(vexRT[Btn8LXmtr2] || !finishedHoming) {
@@ -253,12 +250,10 @@ task usercontrol()
   	}
 
   	if(vexRT[Btn7LXmtr2]) {
-  		//motor[latch2] = -127;
-  		setMotorTarget(latch2,0,127,true);
+  		unlatch();
   	}
   	else if(vexRT[Btn7RXmtr2]) {
-  		//motor[latch2] = 100;
-  		setMotorTarget(latch2,175,127,true);
+  		latch();
   	}
 
   	if(vexRT[Btn7UXmtr2] && !sweeping && !vexRT[Btn5UXmtr2] && !vexRT[Btn5DXmtr2] && !vexRT[Btn6UXmtr2] && !vexRT[Btn6DXmtr2]) {
@@ -291,16 +286,47 @@ task usercontrol()
   		motor[right_sweeper] = 0;
   	}
 
-  	/*char msg[]={0x01,0x1E,0x03};
-  	sendI2CMsg(msg,6);
-  	bytes_available = nI2CBytesReady;
-  	readI2CReply(reading,6);*/
 
-  	angle_measurement = (SensorValue(angle)*(360/3600.));
 
   }
 }
 
-void turnToAngle(float angle) {
+void turnToAngle(float angle) { //turn angle degrees from the current position (relative angle)
+	const float K_P = 6.0; //TUNING PARAMETER
+	float start_angle = SensorValue(angle)*(360/3600.);
+	float current_angle = start_angle;
+	while(current_angle - start_angle < angle - 3 || current_angle - start_angle > angle + 3) { //while the angle isn't within +/- 3 degrees of what is desired
+		int pwr = K_P*(angle - (current_angle - start_angle));
+		if(pwr > 127) {
+			pwr = 127;
+		}
+		if(pwr < -127) {
+			pwr = -127;
+		}
 
+		motor[right_drive_1] = pwr;
+		motor[left_drive_1] = -pwr;
+
+		current_angle = SensorValue(angle)*(360/3600.);
+		delay(10);
+	}
+	motor[right_drive_1] = 0;
+	motor[left_drive_1] = 0;
+}
+
+void driveDist(int encodons) {
+	setMotorTarget(right_drive_1, encodons, 127, false);
+	setMotorTarget(left_drive_1, encodons, 127, false);
+}
+
+void moveShooter(int encodons) {
+  setMotorTarget(right_launch, -encodons, 115, true);
+}
+
+void latch() {
+	setMotorTarget(latch2,175,127,true);
+}
+
+void unlatch() {
+	setMotorTarget(latch2,0,127,true);
 }
