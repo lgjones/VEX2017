@@ -11,7 +11,7 @@
 #pragma config(Sensor, I2C_3,  left_drive_encoder, sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Sensor, I2C_4,  left_lift_encoder, sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Sensor, I2C_5,  right_lift_encoder, sensorQuadEncoderOnI2CPort,    , AutoAssign )
-#pragma config(Sensor, I2C_6,  compass,        sensorSpare2OnI2CPort,         , 0 )
+#pragma config(Sensor, I2C_6,  compass,        sensorSpare2OnI2CPort,         , 0x1E )
 #pragma config(Motor,  port1,           right_sweeper, tmotorVex393_HBridge, PIDControl, reversed, encoderPort, dgtl3)
 #pragma config(Motor,  port2,           latch2,        tmotorVex393_MC29, PIDControl, reversed, encoderPort, I2C_1)
 #pragma config(Motor,  port3,           left_sweeper,  tmotorVex393_MC29, PIDControl, encoderPort, dgtl6)
@@ -42,7 +42,7 @@
 int p,i,d;
 bool finishedHoming = true, sweeping = false;
 const int SWEEPER_POWER = 25;
-int angle_reading;
+float angle_measurement;
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
@@ -99,6 +99,11 @@ void pre_auton()
 	resetMotorEncoder(right_launch);
 	resetMotorEncoder(latch2);
 	wait1Msec(2000);
+
+	/*char msg[]={0x01,0x1E,0x02};
+	sendI2CMsg(msg,0);
+	msg[2]=0x00;
+	sendI2CMsg(msg,0);*/
 }
 
 /*---------------------------------------------------------------------------*/
@@ -286,7 +291,16 @@ task usercontrol()
   		motor[right_sweeper] = 0;
   	}
 
-  	angle_reading = SensorValue(angle);
+  	/*char msg[]={0x01,0x1E,0x03};
+  	sendI2CMsg(msg,6);
+  	bytes_available = nI2CBytesReady;
+  	readI2CReply(reading,6);*/
+
+  	angle_measurement = (SensorValue(angle)*(360/3600.));
 
   }
+}
+
+void turnToAngle(float angle) {
+
 }
