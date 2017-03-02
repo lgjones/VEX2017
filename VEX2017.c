@@ -126,6 +126,18 @@ task autonomous()
   // Remove this function call once you have "real" code.
   //AutonomousCodePlaceholderForTesting();
 
+	//Barebones Autonomous
+	turnToAngle(90);
+	driveDist(4000); //arbitrary value
+	delay(5000);
+	turnToAngle(90);
+	driveDist(1000); //arbitrary value
+	delay(5000);
+	unlatch();
+	delay(3000);
+	moveShooter(200);
+	delay(5000);
+	latch();
 
 }
 
