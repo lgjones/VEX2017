@@ -267,19 +267,31 @@ task usercontrol()
   		sweeping = false;
   	}
 
-  	if(vexRT[Btn5UXmtr2] && !vexRT[Btn5DXmtr2]) {//1500 //-150
+  	if(vexRT[Btn5UXmtr2] && !vexRT[Btn5DXmtr2] && getMotorEncoder(left_sweeper) > 0 && getMotorEncoder(left_sweeper) < 1500 && !vexRT[Btn8RXmtr2]) {//1500 //-150
   		motor[left_sweeper] = SWEEPER_POWER;
   	}
-  	else if(vexRT[Btn5DXmtr2] && !vexRT[Btn5UXmtr2]) {
+  	else if(vexRT[Btn5UXmtr2] && !vexRT[Btn5DXmtr2] && vexRT[Btn8RXmtr2]) {
+  		motor[left_sweeper] = SWEEPER_POWER;
+  	}
+  	else if(vexRT[Btn5DXmtr2] && !vexRT[Btn5UXmtr2] && getMotorEncoder(left_sweeper) > 0 && getMotorEncoder(left_sweeper) < 1500 && !vexRT[Btn8RXmtr2]) {
+  		motor[left_sweeper] = -SWEEPER_POWER;
+  	}
+  	else if(vexRT[Btn5DXmtr2] && !vexRT[Btn5UXmtr2] && vexRT[Btn8RXmtr2]) {
   		motor[left_sweeper] = -SWEEPER_POWER;
   	}
   	else {
   		motor[left_sweeper] = 0;
   	}
-  	if(vexRT[Btn6UXmtr2] && !vexRT[Btn6DXmtr2]) {
+  	if(vexRT[Btn6UXmtr2] && !vexRT[Btn6DXmtr2] && getMotorEncoder(right_sweeper) > 0 && getMotorEncoder(right_sweeper) < 1500 && !vexRT[Btn8RXmtr2]) {
   		motor[right_sweeper] = SWEEPER_POWER;
   	}
-  	else if(vexRT[Btn6DXmtr2] && !vexRT[Btn6UXmtr2]) {
+  	else if(vexRT[Btn6UXmtr2] && !vexRT[Btn6DXmtr2] && vexRT[Btn8RXmtr2]) {
+  		motor[right_sweeper] = SWEEPER_POWER;
+  	}
+  	else if(vexRT[Btn6DXmtr2] && !vexRT[Btn6UXmtr2] && getMotorEncoder(right_sweeper) > 0 && getMotorEncoder(right_sweeper) < 1500 && !vexRT[Btn8RXmtr2]) {
+  		motor[right_sweeper] = -SWEEPER_POWER;
+  	}
+  	else if(vexRT[Btn6DXmtr2] && !vexRT[Btn6UXmtr2] && vexRT[Btn8RXmtr2]) {
   		motor[right_sweeper] = -SWEEPER_POWER;
   	}
   	else {
